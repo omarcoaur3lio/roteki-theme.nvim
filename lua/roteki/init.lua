@@ -10,13 +10,13 @@ function M.setup()
   local highlights = {
     -- Basic UI
     Normal = { fg = palette.fg, bg = palette.bg },
-    NormalFloat = { fg = palette.fg, bg = palette.black },
+    NormalFloat = { fg = palette.white, bg = palette.black },
     CursorLine = { bg = palette.line_highlight },
-    LineNr = { fg = "#8f969b" },
-    CursorLineNr = { fg = "#547f86" },
+    LineNr = { fg = "#35393d" },
+    CursorLineNr = { fg = "#3f815f" },
     Visual = { bg = palette.selection },
-    Search = { bg = "#313a3d" },
-    IncSearch = { bg = "#313a3d" },
+    Search = { bg = palette.selection },
+    IncSearch = { bg = palette.selection },
     StatusLine = { fg = palette.fg, bg = palette.black },
     StatusLineNC = { fg = palette.grey, bg = palette.black },
     VertSplit = { fg = palette.border },
@@ -83,6 +83,24 @@ function M.setup()
     DiagnosticUnderlineWarn = { underline = true, sp = palette.comment },
     DiagnosticUnderlineInfo = { underline = true, sp = palette.comment },
     DiagnosticUnderlineHint = { underline = true, sp = palette.comment },
+
+    -- Telescope
+    TelescopeBorder = { fg = palette.border, bg = palette.bg },
+    TelescopePromptBorder = { fg = palette.border, bg = palette.bg },
+    TelescopeResultsBorder = { fg = palette.border, bg = palette.bg },
+    TelescopePreviewBorder = { fg = palette.border, bg = palette.bg },
+    TelescopePromptTitle = { fg = palette.white, bold = true },
+    TelescopeResultsTitle = { fg = palette.white, bold = true },
+    TelescopePreviewTitle = { fg = palette.white, bold = true },
+    TelescopePromptPrefix = { fg = palette.white, bold = true },
+    TelescopeSelection = { bg = palette.selection },
+    TelescopeMatching = { fg = palette.white, bold = true },
+  
+    MsgArea = { fg = palette.fg, bg = palette.bg },
+    WarningMsg = { fg = palette.yellow, bg = palette.bg },
+    ErrorMsg = { fg = palette.red, bg = palette.bg },
+    ModeMsg = { fg = palette.yellow, bg = palette.bg },
+  
   }
 
   for group, opts in pairs(highlights) do
