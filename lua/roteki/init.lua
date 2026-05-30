@@ -72,7 +72,7 @@ function M.setup()
 
     -- LSP
     LspReferenceText = { bg = palette.grey },
-    LspReferenceRead = { bg = palette.grey },
+    LspReferenceRead = { bg = palette.selection, fg = palette.white },
     LspReferenceWrite = { bg = palette.grey },
     DiagnosticError = { fg = palette.dark_red },
     DiagnosticWarn = { fg = palette.yellow },
@@ -100,7 +100,6 @@ function M.setup()
     WarningMsg = { fg = palette.yellow, bg = palette.bg },
     ErrorMsg = { fg = palette.red, bg = palette.bg },
     ModeMsg = { fg = palette.yellow, bg = palette.bg },
-  
   }
 
   for group, opts in pairs(highlights) do

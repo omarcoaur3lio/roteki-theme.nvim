@@ -17,6 +17,7 @@ const MAX_USERS = 100;
 const HEX_COLOR = "#32c9e4";
 const IS_THEME_COOL = true;
 
+
 /**
  * Interface definition
  */
