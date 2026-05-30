@@ -2,6 +2,8 @@ local M = {}
 local palette = require("roteki.palette").colors
 
 function M.setup()
+  -- Forçar cores reais no terminal
+  vim.opt.termguicolors = true
   -- Set global background
   vim.g.colors_name = "roteki"
 
@@ -32,9 +34,9 @@ function M.setup()
 
     -- Syntax
     Constant = { fg = palette.green },
-    String = { fg = "#9ddef8", italic = true },
-    Number = { fg = palette.green },
-    Boolean = { fg = palette.green },
+    String = { fg = palette.blue, italic = true },
+    Number = { fg = palette.blue },
+    Boolean = { fg = palette.blue },
     Float = { fg = palette.green },
     Identifier = { fg = palette.fg },
     Function = { fg = palette.blue, bold = true },
@@ -43,38 +45,44 @@ function M.setup()
     Keyword = { fg = palette.green, italic = true },
     PreProc = { fg = palette.green },
     Type = { fg = palette.white, bold = true },
-    Special = { fg = palette.blue },
-    Underlined = { underline = true },
+    Special = { fg = palette.cyan, bold = true },
+    Underlined = { underline = true, fg = palette.red },
     Error = { fg = palette.red },
     Todo = { fg = palette.yellow, bold = true },
 
     -- TreeSitter
     ["@variable"] = { fg = palette.fg },
-    ["@variable.builtin"] = { fg = "#809fb6", bold = true },
-    ["@function"] = { fg = palette.blue, bold = true },
-    ["@function.call"] = { fg = palette.green, italic = true },
-    ["@keyword"] = { fg = palette.green, italic = true },
+    ["@variable.builtin"] = { fg = palette.orange },
+    ["@function"] = { fg = palette.green, bold = true},
+    ["@function.call"] = { fg = palette.white },
+    ["@keyword"] = { fg = palette.white, bold = true },
     ["@keyword.function"] = { fg = palette.blue, bold = true },
-    ["@string"] = { fg = "#9ddef8", italic = true },
-    ["@number"] = { fg = palette.green },
-    ["@type"] = { fg = palette.white, bold = true },
+    ["@string"] = { fg = palette.blue, italic = true },
+    ["@number"] = { fg = palette.purple },
+    ["@boolean"] = { fg = palette.purple },
+    ["@type"] = { fg = palette.white },
     ["@constructor"] = { fg = palette.white, bold = true },
     ["@parameter"] = { fg = "#add5e7", italic = true },
     ["@comment"] = { fg = palette.comment, italic = true },
     ["@punctuation.bracket"] = { fg = palette.fg },
     ["@punctuation.delimiter"] = { fg = palette.grey },
     ["@tag"] = { fg = palette.green },
-    ["@tag.delimiter"] = { fg = "#88bb10" },
+    ["@tag.delimiter"] = { fg = palette.red },
     ["@tag.attribute"] = { fg = palette.white },
 
     -- LSP
     LspReferenceText = { bg = palette.grey },
     LspReferenceRead = { bg = palette.grey },
     LspReferenceWrite = { bg = palette.grey },
-    DiagnosticError = { fg = palette.red },
+    DiagnosticError = { fg = palette.dark_red },
     DiagnosticWarn = { fg = palette.yellow },
     DiagnosticInfo = { fg = palette.cyan },
-    DiagnosticHint = { fg = palette.cyan },
+    DiagnosticHint = { fg = palette.comment },
+    
+    DiagnosticUnderlineError = { underline = true, sp = palette.dark_red },
+    DiagnosticUnderlineWarn = { underline = true, sp = palette.comment },
+    DiagnosticUnderlineInfo = { underline = true, sp = palette.comment },
+    DiagnosticUnderlineHint = { underline = true, sp = palette.comment },
   }
 
   for group, opts in pairs(highlights) do
