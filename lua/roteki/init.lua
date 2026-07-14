@@ -45,7 +45,7 @@ function M.setup()
     Keyword = { fg = palette.green, italic = true },
     PreProc = { fg = palette.green },
     Type = { fg = palette.white, bold = true },
-    Special = { fg = palette.cyan, bold = true },
+    Special = { fg = palette.grey, bold = true },
     Underlined = { underline = true, fg = palette.red },
     Error = { fg = palette.red },
     Todo = { fg = palette.yellow, bold = true },
@@ -65,20 +65,24 @@ function M.setup()
     ["@parameter"] = { fg = "#add5e7", italic = true },
     ["@comment"] = { fg = palette.comment, italic = true },
     ["@punctuation.bracket"] = { fg = palette.fg },
-    ["@punctuation.delimiter"] = { fg = palette.grey },
-    ["@tag"] = { fg = palette.green },
-    ["@tag.delimiter"] = { fg = palette.red },
-    ["@tag.attribute"] = { fg = palette.white },
+    ["@punctuation.delimiter"] = { fg = palette.fg },
+    ["@tag"] = { fg = palette.green, bold = true },
+    ["@tag.delimiter"] = { fg = palette.fg },
+    ["@tag.delimiter.tsx"] = { fg = palette.fg },
+    ["@tag.delimiter.jsx"] = { fg = palette.fg },
+    ["@tag.attribute"] = { fg = palette.fg },
+    ["@keyword.import"] = { fg = palette.cyan, bold = true},
 
     -- LSP
-    LspReferenceText = { bg = palette.grey },
+
+    LspReferenceText = { bg = palette.fg, fg = palette.black },
     LspReferenceRead = { bg = palette.selection, fg = palette.white },
-    LspReferenceWrite = { bg = palette.grey },
+    LspReferenceWrite = { bg = palette.white, fg = palette.black },
+
     DiagnosticError = { fg = palette.dark_red },
     DiagnosticWarn = { fg = palette.yellow },
     DiagnosticInfo = { fg = palette.cyan },
-    DiagnosticHint = { fg = palette.comment },
-    
+    DiagnosticHint = { fg = palette.comment }, 
     DiagnosticUnderlineError = { underline = true, sp = palette.dark_red },
     DiagnosticUnderlineWarn = { underline = true, sp = palette.comment },
     DiagnosticUnderlineInfo = { underline = true, sp = palette.comment },
@@ -97,8 +101,6 @@ function M.setup()
     TelescopeMatching = { fg = palette.white, bold = true },
   
     MsgArea = { fg = palette.fg, bg = palette.bg },
-    WarningMsg = { fg = palette.yellow, bg = palette.bg },
-    ErrorMsg = { fg = palette.red, bg = palette.bg },
     ModeMsg = { fg = palette.yellow, bg = palette.bg },
   }
 
