@@ -57,7 +57,7 @@ function M.setup()
     ["@function.call"] = { fg = palette.white },
     ["@keyword"] = { fg = palette.white, bold = true },
     ["@keyword.function"] = { fg = palette.blue, bold = true },
-    ["@string"] = { fg = palette.blue, italic = true },
+    ["@string"] = { fg = palette.blue },
     ["@number"] = { fg = palette.purple },
     ["@boolean"] = { fg = palette.purple },
     ["@type"] = { fg = palette.white },
