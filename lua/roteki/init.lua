@@ -82,11 +82,18 @@ function M.setup()
     DiagnosticError = { fg = palette.dark_red },
     DiagnosticWarn = { fg = palette.yellow },
     DiagnosticInfo = { fg = palette.cyan },
-    DiagnosticHint = { fg = palette.comment }, 
+    DiagnosticHint = { fg = palette.comment },
     DiagnosticUnderlineError = { underline = true, sp = palette.dark_red },
     DiagnosticUnderlineWarn = { underline = true, sp = palette.comment },
-    DiagnosticUnderlineInfo = { underline = true, sp = palette.comment },
+    DiagnosticUnderlineInfo = { underline = true, sp = palette.blue },
     DiagnosticUnderlineHint = { underline = true, sp = palette.comment },
+
+    DiagnosticFloatingError = { fg = palette.red },
+    DiagnosticFloatingWarn = { fg = palette.yellow },
+    DiagnosticFloatingInfo = { fg = palette.cyan },
+    DiagnosticFloatingHint = { fg = palette.fg },
+
+    FloatBorder = { fg = palette.black, bg = palette.black },
 
     -- Telescope
     TelescopeBorder = { fg = palette.border, bg = palette.bg },
