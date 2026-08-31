@@ -46,3 +46,55 @@ describe("Cache operations", function()
     assert.is_nil(Utils.cache.read("dummy-key-2"), "Cache 2 was not cleared")
   end)
 end)
+
+describe("Cache invalidation", function()
+  local Config = require("roteki.config")
+  local Groups = require("roteki.groups")
+
+  before_each(function()
+    Utils.cache.clear()
+    Groups._mem_cache = {}
+    Config.setup()
+  end)
+
+  after_each(function()
+    Utils.cache.clear()
+    Groups._mem_cache = {}
+    Config.setup()
+  end)
+
+  it("regenera o cache quando a paleta muda", function()
+    local palette = vim.deepcopy(require("roteki.palette.dark"))
+    local opts = Config.extend({ cache = true, auto = false })
+
+    Groups.setup(palette, opts, "dark")
+    local before = Utils.cache.read("dark")
+    assert.is_not_nil(before, "initial cache should be created")
+    assert.are.equal(palette.bg, before.groups.Normal.bg)
+
+    palette.bg = "#123456"
+    Groups.setup(palette, opts, "dark")
+    local after = Utils.cache.read("dark")
+
+    assert.are_not.same(before.config.palette, after.config.palette, "palette fingerprint did not update")
+    assert.are.equal("#123456", after.groups.Normal.bg, "highlights were served stale from cache")
+  end)
+
+  it("regenera o cache quando os styles mudam", function()
+    local palette = require("roteki.palette.dark")
+
+    Groups.setup(palette, Config.extend({ cache = true, auto = false }), "dark")
+    local before = Utils.cache.read("dark")
+
+    Groups.setup(palette, Config.extend({ cache = true, auto = false, styles = { comments = { italic = false } } }), "dark")
+    local after = Utils.cache.read("dark")
+
+    assert.are_not.same(before.config.opts.styles, after.config.opts.styles, "styles fingerprint did not update")
+  end)
+
+  it("não grava nada quando cache=false", function()
+    Groups.setup(require("roteki.palette.dark"), Config.extend({ cache = false, auto = false }), "dark")
+
+    assert.is_nil(Utils.cache.read("dark"), "no cache file should be written when cache=false")
+  end)
+end)

@@ -96,3 +96,106 @@ describe("Group files", function()
     end
   end)
 end)
+
+describe("Plugin detection", function()
+  local Groups = require("roteki.groups")
+  local Utils = require("roteki.utils")
+  local colors = require("roteki.palette.dark")
+  local original_pack = vim.pack
+  local original_minideps = _G.MiniDeps
+
+  before_each(function()
+    package.loaded["lazy"] = nil
+    package.loaded["lazy.core.config"] = nil
+    Groups._mem_cache = {}
+    Utils.cache.clear()
+  end)
+
+  after_each(function()
+    vim.pack = original_pack
+    _G.MiniDeps = original_minideps
+    package.loaded["lazy"] = nil
+    package.loaded["lazy.core.config"] = nil
+    Groups._mem_cache = {}
+    Utils.cache.clear()
+  end)
+
+  it("monta só os grupos core quando nenhuma API de gerenciador está presente", function()
+    vim.pack = nil
+    _G.MiniDeps = nil
+
+    local _, loaded = Groups.setup(colors, Config.extend({ auto = true, cache = false }), "dark")
+
+    assert.is_true(loaded.base, "base group should be loaded")
+    assert.is_true(loaded.syntax)
+    assert.is_true(loaded.treesitter)
+    assert.is_true(loaded.lsp)
+    assert.is_nil(loaded.gitsigns, "gitsigns should NOT be loaded")
+  end)
+
+  it("monta só os grupos core quando vim.pack devolve lista vazia", function()
+    vim.pack = { get = function() return {} end }
+    _G.MiniDeps = nil
+
+    local _, loaded = Groups.setup(colors, Config.extend({ auto = true, cache = false }), "dark")
+
+    assert.is_true(loaded.base)
+    assert.is_nil(loaded.gitsigns, "gitsigns should NOT be loaded")
+  end)
+
+  it("monta todos os plugins quando auto=false", function()
+    local _, loaded = Groups.setup(colors, Config.extend({ auto = false, cache = false }), "dark")
+
+    assert.is_true(loaded.telescope, "Telescope should be loaded")
+    assert.is_true(loaded.blink, "Blink should be loaded")
+    assert.is_true(loaded.snacks)
+  end)
+
+  it("respeita a detecção do lazy.nvim", function()
+    vim.pack = nil
+    _G.MiniDeps = nil
+    package.loaded.lazy = true
+    package.loaded["lazy.core.config"] = {
+      plugins = { ["telescope.nvim"] = { name = "telescope.nvim" } },
+    }
+
+    local _, loaded = Groups.setup(colors, Config.extend({ auto = true, cache = false }), "dark")
+
+    assert.is_true(loaded.telescope, "Telescope should be loaded")
+    assert.is_nil(loaded.blink, "Blink should NOT be loaded")
+  end)
+
+  it("respeita a detecção do vim.pack", function()
+    _G.MiniDeps = nil
+    vim.pack = {
+      get = function()
+        return { { active = true, spec = { name = "blink.cmp" } } }
+      end,
+    }
+
+    local _, loaded = Groups.setup(colors, Config.extend({ auto = true, cache = false }), "dark")
+
+    assert.is_true(loaded.blink, "Blink should be loaded via vim.pack")
+    assert.is_nil(loaded.telescope, "Telescope should NOT be loaded")
+  end)
+
+  it("detecta módulos mini.* avulsos", function()
+    vim.pack = nil
+    _G.MiniDeps = nil
+    package.loaded.lazy = true
+    package.loaded["lazy.core.config"] = {
+      plugins = { ["mini.pick"] = { name = "mini.pick" } },
+    }
+
+    local _, loaded = Groups.setup(colors, Config.extend({ auto = true, cache = false }), "dark")
+
+    assert.is_true(loaded.mini, "standalone mini.* modules should enable the mini group")
+  end)
+
+  it("todo valor de Groups.plugins tem um arquivo correspondente", function()
+    for plugin, group in pairs(Groups.plugins) do
+      local ok = pcall(require, "roteki.groups." .. group)
+      assert.is_true(ok, "plugin '" .. plugin .. "' maps to missing group file: " .. group)
+    end
+  end)
+end)
