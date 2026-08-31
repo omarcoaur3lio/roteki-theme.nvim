@@ -72,4 +72,16 @@ describe("The colorscheme should", function()
     Roteki.setup()
     assert.is_not_nil(vim.fn.getcompletion("RotekiFetch", "command")[1], ":RotekiFetch was not registered")
   end)
+
+  it("registrar :RotekiFetch ao carregar sem chamar setup (Finding 4)", function()
+    pcall(vim.api.nvim_del_user_command, "RotekiFetch")
+    assert.is_nil(vim.fn.getcompletion("RotekiFetch", "command")[1], "test precondition failed: command still registered")
+
+    vim.cmd("colorscheme roteki")
+
+    assert.is_not_nil(
+      vim.fn.getcompletion("RotekiFetch", "command")[1],
+      ":RotekiFetch should exist after colorscheme roteki even without calling setup()"
+    )
+  end)
 end)

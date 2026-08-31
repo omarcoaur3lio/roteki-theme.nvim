@@ -1,14 +1,19 @@
 local M = {}
 
+-- Recarrega o colorscheme com :RotekiFetch. Idempotente: nvim_create_user_command
+-- sobrescreve silenciosamente uma definição já existente, então é seguro chamar
+-- em toda `setup()` e todo `load()` sem duplicar ou dar erro.
+local function register_fetch_command()
+  vim.api.nvim_create_user_command("RotekiFetch", function()
+    require("roteki.utils").reload()
+  end, {})
+end
+
 --- Configura o tema. Não aplica: use `vim.cmd("colorscheme roteki")`.
 ---@param opts roteki.Config|nil
 function M.setup(opts)
   require("roteki.config").setup(opts)
-
-  -- Recarrega o colorscheme com :RotekiFetch
-  vim.api.nvim_create_user_command("RotekiFetch", function()
-    require("roteki.utils").reload()
-  end, {})
+  register_fetch_command()
 end
 
 --- Devolve a paleta da variante com os overrides do usuário aplicados
@@ -39,6 +44,8 @@ end
 --- Aplica o tema
 ---@param theme string|nil
 function M.load(theme)
+  register_fetch_command()
+
   local name = theme and "roteki-" .. theme or "roteki"
   theme = require("roteki.utils").resolve(theme)
   local config = require("roteki.config")

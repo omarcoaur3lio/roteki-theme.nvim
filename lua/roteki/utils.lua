@@ -41,7 +41,10 @@ function M.cache.read(key)
     return nil
   end
   local is_ok, ret = pcall(vim.json.decode, data, { luanil = { object = true, array = true } })
-  return is_ok and ret or nil
+  if not is_ok or type(ret) ~= "table" then
+    return nil
+  end
+  return ret
 end
 
 --- Codifica e grava os dados no diretório de cache

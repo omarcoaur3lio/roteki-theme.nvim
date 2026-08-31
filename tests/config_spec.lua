@@ -116,6 +116,21 @@ describe("on_highlights callback", function()
     assert.are.equal(0xFF00FF, hl.fg)
     assert.are.equal(0x00FF00, hl.bg)
   end)
+
+  it("aceita style no callback sem quebrar o colorscheme (Finding 2)", function()
+    Config.setup({
+      cache = false,
+      on_highlights = function(highlights, colors)
+        highlights.RotekiTestStyle = { fg = colors.fg, style = { bold = true } }
+      end,
+    })
+
+    local ok, err = pcall(vim.cmd, "colorscheme roteki")
+    assert.is_true(ok, "colorscheme should not fail when on_highlights sets style: " .. tostring(err))
+
+    local hl = vim.api.nvim_get_hl(0, { name = "RotekiTestStyle" })
+    assert.is_true(hl.bold, "style.bold set by on_highlights should have been applied")
+  end)
 end)
 
 describe("Color overrides via get_palette", function()

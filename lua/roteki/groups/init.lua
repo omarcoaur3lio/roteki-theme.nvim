@@ -108,15 +108,18 @@ function M.setup(colors, opts, theme)
     plugins = names,
     version = Config._version,
     palette = vim.deepcopy(colors),
-    opts = {
+    -- Copiado à parte: sem isso, mutar opts.styles/opts.colors in-place faz a
+    -- fingerprint mudar junto com o cache, comparando uma tabela consigo mesma.
+    opts = vim.deepcopy({
       styles = opts.styles,
       colors = opts.colors,
       transparent = opts.transparent,
-    },
+    }),
   }
 
   local function cache_valid(c)
-    return c
+    return type(c) == "table"
+      and type(c.opts) == "table"
       and c.version == config.version
       and c.opts.transparent == config.opts.transparent
       and vim.deep_equal(c.plugins, config.plugins)
@@ -143,7 +146,8 @@ function M.setup(colors, opts, theme)
     end
   end
 
-  -- Cache miss: monta do zero
+  -- Cache miss: monta do zero. Fica salvo (disco e memória) SEM unpack e SEM
+  -- passar por on_highlights: é a versão "crua", replayable a cada :colorscheme.
   if not hl then
     hl = {}
     for group in pairs(groups) do
@@ -151,14 +155,18 @@ function M.setup(colors, opts, theme)
         hl[k] = v
       end
     end
-    Utils.unpack(hl)
     if opts.cache then
       Utils.cache.write(cache_key, { groups = hl, config = config })
       M._mem_cache[cache_key] = { groups = hl, config = config }
     end
   end
 
+  -- Nunca entrega (nem deixa o hook mutar) a tabela cacheada em si: uma cópia
+  -- privada por chamada é o que impede on_highlights de compor entre cargas.
+  -- unpack roda DEPOIS do hook para permitir que on_highlights também use `style`.
+  hl = vim.deepcopy(hl)
   opts.on_highlights(hl, colors)
+  Utils.unpack(hl)
 
   return hl, groups
 end
