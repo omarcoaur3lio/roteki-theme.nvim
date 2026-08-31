@@ -1,0 +1,54 @@
+---@class roteki.Highlight: vim.api.keyset.highlight
+---@field style? vim.api.keyset.highlight
+
+---@alias roteki.Highlights table<string, roteki.Highlight>
+--- Valores devem ser uma tabela roteki.Highlight.
+--- Para linkar em outro grupo, use a propriedade `link`: { link = "Normal" }
+
+---@alias roteki.HighlightsFn fun(colors: roteki.Palette, opts: roteki.Config): roteki.Highlights
+--- Recebe paleta e config, devolve definições de highlight
+
+---@class roteki.Cache
+--- Dados do colorscheme cacheados em stdpath("cache")
+---@field groups roteki.Highlights Grupos compilados
+---@field config table Impressão digital usada para invalidação
+
+---@class roteki.Palette
+--- Paleta de cores com nomes semânticos
+---@field bg string?
+---@field fg string?
+---@field dim string?
+---@field line string?
+---@field selection string?
+---@field black string?
+---@field keyword string?
+---@field type string?
+---@field operator string?
+---@field comment string?
+---@field border string?
+---@field emphasis string?
+---@field func string?
+---@field string string?
+---@field char string?
+---@field special string?
+---@field const string?
+---@field highlight string?
+---@field info string?
+---@field success string?
+---@field warning string?
+---@field danger string?
+---@field green string?
+---@field orange string?
+---@field red string?
+---@field pink string?
+---@field cyan string?
+
+---@class roteki.Config
+--- Opções de configuração do usuário
+---@field transparent? boolean
+---@field theme? table<"dark"|"light", string>
+---@field cache? boolean
+---@field styles? table<string, vim.api.keyset.highlight>
+---@field colors? table<string, string> | table<"dark", table<string, string>>
+---@field auto? boolean
+---@field on_highlights? fun(highlights: roteki.Highlights, colors: roteki.Palette)
