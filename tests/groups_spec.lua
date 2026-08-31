@@ -121,7 +121,7 @@ describe("Plugin detection", function()
   end)
 
   it("monta só os grupos core quando nenhuma API de gerenciador está presente", function()
-    vim.pack = nil
+    vim.pack = false
     _G.MiniDeps = nil
 
     local _, loaded = Groups.setup(colors, Config.extend({ auto = true, cache = false }), "dark")
@@ -152,7 +152,7 @@ describe("Plugin detection", function()
   end)
 
   it("respeita a detecção do lazy.nvim", function()
-    vim.pack = nil
+    vim.pack = false
     _G.MiniDeps = nil
     package.loaded.lazy = true
     package.loaded["lazy.core.config"] = {
@@ -180,7 +180,7 @@ describe("Plugin detection", function()
   end)
 
   it("detecta módulos mini.* avulsos", function()
-    vim.pack = nil
+    vim.pack = false
     _G.MiniDeps = nil
     package.loaded.lazy = true
     package.loaded["lazy.core.config"] = {

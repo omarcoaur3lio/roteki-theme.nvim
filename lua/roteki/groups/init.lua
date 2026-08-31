@@ -107,7 +107,7 @@ function M.setup(colors, opts, theme)
   local config = {
     plugins = names,
     version = Config._version,
-    palette = colors,
+    palette = vim.deepcopy(colors),
     opts = {
       styles = opts.styles,
       colors = opts.colors,
