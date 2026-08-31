@@ -61,3 +61,43 @@ describe("Utils.unpack", function()
     assert.is_true(result.Overlap.bold)
   end)
 end)
+
+describe("Utils.resolve", function()
+  local Config = require("roteki.config")
+  local initial_background = vim.o.background
+
+  before_each(function()
+    Config.setup()
+  end)
+
+  after_each(function()
+    Config.setup()
+    vim.o.background = initial_background
+  end)
+
+  it("devolve a variante explícita quando informada", function()
+    assert.are.equal("dark", Utils.resolve("dark"))
+  end)
+
+  it("resolve pelos defaults para 'dark' em qualquer background", function()
+    vim.o.background = "dark"
+    assert.are.equal("dark", Utils.resolve())
+
+    vim.o.background = "light"
+    assert.are.equal("dark", Utils.resolve())
+  end)
+
+  it("segue o mapeamento configurado pelo usuário", function()
+    Config.setup({ theme = { dark = "dark", light = "solarized" } })
+
+    vim.o.background = "light"
+    assert.are.equal("solarized", Utils.resolve())
+  end)
+
+  it("cai em vim.o.background quando a config não tem o mapeamento", function()
+    Config.setup({ theme = {} })
+
+    vim.o.background = "dark"
+    assert.are.equal("dark", Utils.resolve())
+  end)
+end)
