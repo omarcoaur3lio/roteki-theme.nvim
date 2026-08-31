@@ -1,118 +1,61 @@
 local M = {}
-local palette = require("roteki.palette").colors
 
-function M.setup()
-  -- Forçar cores reais no terminal
-  vim.opt.termguicolors = true
-  -- Set global background
-  vim.g.colors_name = "roteki"
+--- Configura o tema. Não aplica: use `vim.cmd("colorscheme roteki")`.
+---@param opts roteki.Config|nil
+function M.setup(opts)
+  require("roteki.config").setup(opts)
 
-  local highlights = {
-    -- Basic UI
-    Normal = { fg = palette.fg, bg = palette.bg },
-    NormalFloat = { fg = palette.white, bg = palette.black },
-    CursorLine = { bg = palette.line_highlight },
-    LineNr = { fg = "#35393d" },
-    CursorLineNr = { fg = "#3f815f" },
-    Visual = { bg = palette.selection },
-    Search = { bg = palette.selection },
-    IncSearch = { bg = palette.selection },
-    StatusLine = { fg = palette.fg, bg = palette.black },
-    StatusLineNC = { fg = palette.grey, bg = palette.black },
-    VertSplit = { fg = palette.border },
-    WinSeparator = { fg = palette.border },
-    SignColumn = { bg = palette.bg },
-    EndOfBuffer = { fg = palette.bg },
-    ColorColumn = { bg = palette.black },
-    Directory = { fg = palette.blue },
-    ErrorMsg = { fg = palette.red },
-    WarningMsg = { fg = palette.yellow },
-    Folded = { fg = palette.grey, bg = palette.line_highlight },
-    Pmenu = { fg = palette.fg, bg = palette.black },
-    PmenuSel = { fg = palette.white, bg = palette.selection },
-    Comment = { fg = palette.comment, italic = true },
+  -- Recarrega o colorscheme com :RotekiFetch
+  vim.api.nvim_create_user_command("RotekiFetch", function()
+    require("roteki.utils").reload()
+  end, {})
+end
 
-    -- Syntax
-    Constant = { fg = palette.green },
-    String = { fg = palette.light_blue, italic = true },
-    Number = { fg = palette.blue },
-    Boolean = { fg = palette.blue },
-    Float = { fg = palette.green },
-    Identifier = { fg = palette.fg },
-    Function = { fg = palette.blue, bold = true },
-    Statement = { fg = palette.green, italic = true },
-    Operator = { fg = palette.fg },
-    Keyword = { fg = palette.green, italic = true },
-    PreProc = { fg = palette.green },
-    Type = { fg = palette.white, bold = true },
-    Special = { fg = palette.light_blue, bold = false },
-    Underlined = { underline = true, fg = palette.red },
-    Error = { fg = palette.red },
-    Todo = { fg = palette.yellow, bold = true },
+--- Devolve a paleta da variante com os overrides do usuário aplicados
+---@param theme string|nil
+---@return roteki.Palette
+function M.get_palette(theme)
+  theme = require("roteki.utils").resolve(theme)
+  local config = require("roteki.config")
+  local palette = require("roteki.palette." .. theme)
 
-    -- TreeSitter
-    ["@variable"] = { fg = palette.fg },
-    ["@variable.builtin"] = { fg = palette.orange },
-    ["@function"] = { fg = palette.green, bold = true},
-    ["@function.call"] = { fg = palette.white },
-    ["@keyword"] = { fg = palette.white, bold = true },
-    ["@keyword.function"] = { fg = palette.blue, bold = true },
-    ["@string"] = { fg = palette.light_blue },
-    ["@number"] = { fg = palette.purple },
-    ["@boolean"] = { fg = palette.purple },
-    ["@type"] = { fg = palette.white },
-    ["@constructor"] = { fg = palette.white, bold = true },
-    ["@parameter"] = { fg = "#add5e7", italic = true },
-    ["@comment"] = { fg = palette.comment, italic = true },
-    ["@punctuation.bracket"] = { fg = palette.fg },
-    ["@punctuation.delimiter"] = { fg = palette.fg },
-    ["@tag"] = { fg = palette.green, bold = true },
-    ["@tag.delimiter"] = { fg = palette.fg },
-    ["@tag.delimiter.tsx"] = { fg = palette.fg },
-    ["@tag.delimiter.jsx"] = { fg = palette.fg },
-    ["@tag.attribute"] = { fg = palette.fg },
-    ["@keyword.import"] = { fg = palette.cyan, bold = true},
+  if config.options.colors and type(config.options.colors) == "table" then
+    local colors = config.options.colors[theme] or config.options.colors
+    palette = vim.tbl_deep_extend("force", palette, colors)
+  end
 
-    -- LSP
+  return palette
+end
 
-    LspReferenceText = { bg = palette.fg, fg = palette.black },
-    LspReferenceRead = { bg = palette.selection, fg = palette.white },
-    LspReferenceWrite = { bg = palette.white, fg = palette.black },
+--- Mistura duas cores por transparência
+---@param foreground string
+---@param background string
+---@param alpha number Fator de mistura (0 a 1)
+---@return string # hex no formato "#RRGGBB"
+function M.blend(foreground, background, alpha)
+  return require("roteki.utils").blend(foreground, background, alpha)
+end
 
-    DiagnosticError = { fg = palette.dark_red },
-    DiagnosticWarn = { fg = palette.yellow },
-    DiagnosticInfo = { fg = palette.cyan },
-    DiagnosticHint = { fg = palette.comment },
-    DiagnosticUnderlineError = { underline = true, sp = palette.dark_red },
-    DiagnosticUnderlineWarn = { underline = true, sp = palette.comment },
-    DiagnosticUnderlineInfo = { underline = true, sp = palette.blue },
-    DiagnosticUnderlineHint = { underline = true, sp = palette.comment },
+--- Aplica o tema
+---@param theme string|nil
+function M.load(theme)
+  local name = theme and "roteki-" .. theme or "roteki"
+  theme = require("roteki.utils").resolve(theme)
+  local config = require("roteki.config")
+  local groups = require("roteki.groups")
+  local palette = M.get_palette(theme)
 
-    DiagnosticFloatingError = { fg = palette.red },
-    DiagnosticFloatingWarn = { fg = palette.yellow },
-    DiagnosticFloatingInfo = { fg = palette.cyan },
-    DiagnosticFloatingHint = { fg = palette.fg },
+  -- Zera os highlights para que estilos do tema anterior não vazem
+  vim.cmd("hi clear")
+  if vim.fn.exists("syntax_on") == 1 then
+    vim.cmd("syntax reset")
+  end
+  vim.g.colors_name = name
 
-    FloatBorder = { fg = palette.black, bg = palette.black },
+  local hl_groups = groups.setup(palette, config.options, theme)
 
-    -- Telescope
-    TelescopeBorder = { fg = palette.border, bg = palette.bg },
-    TelescopePromptBorder = { fg = palette.border, bg = palette.bg },
-    TelescopeResultsBorder = { fg = palette.border, bg = palette.bg },
-    TelescopePreviewBorder = { fg = palette.border, bg = palette.bg },
-    TelescopePromptTitle = { fg = palette.white, bold = true },
-    TelescopeResultsTitle = { fg = palette.white, bold = true },
-    TelescopePreviewTitle = { fg = palette.white, bold = true },
-    TelescopePromptPrefix = { fg = palette.white, bold = true },
-    TelescopeSelection = { bg = palette.selection },
-    TelescopeMatching = { fg = palette.white, bold = true },
-  
-    MsgArea = { fg = palette.fg, bg = palette.bg },
-    ModeMsg = { fg = palette.yellow, bg = palette.bg },
-  }
-
-  for group, opts in pairs(highlights) do
-    vim.api.nvim_set_hl(0, group, opts)
+  for group, hl in pairs(hl_groups) do
+    vim.api.nvim_set_hl(0, group, hl)
   end
 end
 

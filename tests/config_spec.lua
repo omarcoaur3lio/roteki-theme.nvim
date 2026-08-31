@@ -78,3 +78,99 @@ describe("Config defaults", function()
     assert.are.same({}, s.constants)
   end)
 end)
+
+describe("on_highlights callback", function()
+  after_each(function()
+    Config.setup()
+  end)
+
+  it("recebe highlights e paleta", function()
+    local captured_hl, captured_colors
+
+    Config.setup({
+      cache = false,
+      on_highlights = function(highlights, colors)
+        captured_hl = highlights
+        captured_colors = colors
+      end,
+    })
+    vim.cmd("colorscheme roteki")
+
+    assert.is_table(captured_hl, "on_highlights should receive the highlights table")
+    assert.is_table(captured_colors, "on_highlights should receive the palette")
+    assert.is_not_nil(captured_hl.Normal, "highlights should contain Normal")
+    assert.is_not_nil(captured_colors.bg, "palette should contain bg")
+  end)
+
+  it("aplica as mutações feitas no callback", function()
+    Config.setup({
+      cache = false,
+      on_highlights = function(highlights, _)
+        highlights.Normal = { fg = "#FF00FF", bg = "#00FF00" }
+      end,
+    })
+    vim.cmd("colorscheme roteki")
+
+    local hl = vim.api.nvim_get_hl(0, { name = "Normal" })
+
+    assert.are.equal(0xFF00FF, hl.fg)
+    assert.are.equal(0x00FF00, hl.bg)
+  end)
+end)
+
+describe("Color overrides via get_palette", function()
+  local Roteki = require("roteki")
+
+  after_each(function()
+    Config.setup()
+  end)
+
+  it("aplica overrides globais na paleta", function()
+    Config.setup({ colors = { bg = "#111111", fg = "#eeeeee" } })
+
+    local palette = Roteki.get_palette("dark")
+
+    assert.are.equal("#111111", palette.bg)
+    assert.are.equal("#eeeeee", palette.fg)
+  end)
+
+  it("aplica overrides por variante", function()
+    Config.setup({ colors = { dark = { border = "#000000" } } })
+
+    assert.are.equal("#000000", Roteki.get_palette("dark").border)
+  end)
+
+  it("preserva as cores não sobrescritas", function()
+    local original = Roteki.get_palette("dark")
+    local original_keyword = original.keyword
+
+    Config.setup({ colors = { bg = "#111111" } })
+    local modified = Roteki.get_palette("dark")
+
+    assert.are.equal("#111111", modified.bg)
+    assert.are.equal(original_keyword, modified.keyword, "keyword should be unchanged")
+  end)
+end)
+
+describe("Transparent mode", function()
+  after_each(function()
+    Config.setup()
+  end)
+
+  it("deixa o fundo de Normal vazio quando transparent=true", function()
+    Config.setup({ transparent = true, cache = false })
+    vim.cmd("colorscheme roteki")
+
+    local hl = vim.api.nvim_get_hl(0, { name = "Normal" })
+
+    -- Com bg = "none", nvim_get_hl não devolve a chave bg
+    assert.is_nil(hl.bg, "Normal bg should be nil (transparent)")
+  end)
+
+  it("define um fundo concreto quando transparent=false", function()
+    Config.setup({ transparent = false, cache = false })
+    vim.cmd("colorscheme roteki")
+
+    assert.is_not_nil(vim.api.nvim_get_hl(0, { name = "Normal" }).bg, "Normal bg should be set")
+  end)
+end)

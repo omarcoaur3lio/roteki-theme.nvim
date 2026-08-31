@@ -1,1 +1,1 @@
-require("roteki").setup()
+require("roteki").load()
