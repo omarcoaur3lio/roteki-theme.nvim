@@ -32,7 +32,7 @@ function M.get_hl(c, opts)
     VertSplit         = { link = "WinSeparator" },
     Pmenu             = { fg = c.fg, bg = float },
     PmenuSel          = { fg = c.fg, bg = c.selection, bold = true },
-    PmenuThumb        = { bg = c.fg },
+    PmenuThumb        = { bg = c.border },
     PmenuMatch        = { fg = c.const, bold = true },
     Visual            = { bg = c.selection },
     Search            = { link = "Visual" },
