@@ -9,13 +9,13 @@ function M.get_hl(c, opts)
     TelescopePromptBorder  = { link = "TelescopeBorder" },
     TelescopeResultsBorder = { link = "TelescopeBorder" },
     TelescopePreviewBorder = { link = "TelescopeBorder" },
-    TelescopeTitle         = { fg = c.emphasis, bold = true },
+    TelescopeTitle         = { fg = c.string, bold = true },
     TelescopePromptTitle   = { link = "TelescopeTitle" },
     TelescopeResultsTitle  = { link = "TelescopeTitle" },
     TelescopePreviewTitle  = { link = "TelescopeTitle" },
-    TelescopePromptPrefix  = { fg = c.emphasis, bold = true },
+    TelescopePromptPrefix  = { fg = c.string, bold = true },
     TelescopeSelection     = { bg = c.selection },
-    TelescopeMatching      = { fg = c.const, bold = true },
+    TelescopeMatching      = { fg = c.keyword, bold = true },
   }
 end
 

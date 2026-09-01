@@ -12,6 +12,7 @@ M.plugins = {
   ["flash.nvim"]              = "flash",
   ["fzf-lua"]                 = "fzf",
   ["gitsigns.nvim"]           = "gitsigns",
+  ["indent-blankline.nvim"]   = "ibl",
   ["mason.nvim"]              = "mason",
   ["mini.nvim"]               = "mini",
   ["modes.nvim"]              = "modes",
