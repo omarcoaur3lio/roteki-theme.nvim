@@ -6,12 +6,12 @@ local M = {}
 ---@type roteki.HighlightsFn
 function M.get_hl(c, opts)
   local bg = opts.transparent and "none" or c.bg
-  local float = opts.transparent and "none" or c.black
+  local float = opts.transparent and "none" or c.bg
   -- stylua: ignore
   return {
     Normal            = { fg = c.fg, bg = bg },
     NormalFloat       = { fg = c.fg, bg = float },
-    FloatBorder       = { fg = c.border, bg = float },
+    FloatBorder       = { fg = c.border, bg = c.bg},
     Cursor            = { fg = c.fg, bg = c.fg },
     TermCursor        = { link = "Cursor" },
     lCursor           = { link = "Cursor" },

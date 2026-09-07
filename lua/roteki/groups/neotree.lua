@@ -11,6 +11,9 @@ function M.get_hl(c)
     NeoTreeGitConflict  = { fg = c.red },
     NeoTreeGitUntracked = { fg = c.orange },
     NeoTreeGitUnstaged  = { fg = c.orange },
+    NeoTreeFloatNormal  = { link = "Normal" },
+    NeoTreeFloatBorder  = { link = "FloatBorder" },
+    NeoTreeFloatTitle   = { link = "Title" },
   }
 end
 
