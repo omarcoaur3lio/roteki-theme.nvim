@@ -23,6 +23,7 @@ M.plugins = {
   ["snacks.nvim"]             = "snacks",
   ["telescope.nvim"]          = "telescope",
   ["trouble.nvim"]            = "trouble",
+  ["which-key.nvim"]          = "whichkey",
 }
 
 --- Devolve os highlights de um grupo específico
